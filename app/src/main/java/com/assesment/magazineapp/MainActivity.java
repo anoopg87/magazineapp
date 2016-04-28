@@ -1,5 +1,6 @@
 package com.assesment.magazineapp;
 
+import android.os.PersistableBundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -21,6 +22,7 @@ public static String TAG="MainActivity";
 
     Toolbar toolbar;
     FragmentManager mFragmentManager;
+    Fragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,14 +31,21 @@ public static String TAG="MainActivity";
         toolbar= (Toolbar) findViewById(R.id.toolbar);
         toolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(toolbar);
+        mFragmentManager=getSupportFragmentManager();
+        if(null!=savedInstanceState) {
+            mFragment = mFragmentManager.getFragment(savedInstanceState, "Fragment");
+        }
         loadNewsFragment();
     }
 
     private void loadNewsFragment() {
 
-        mFragmentManager=getSupportFragmentManager();
+
         FragmentTransaction mFragmentTransaction=mFragmentManager.beginTransaction();
-        Fragment mFragment=NewsListFragment.newInstance();
+
+        if(null==mFragment) {
+             mFragment = NewsListFragment.newInstance();
+        }
         mFragmentTransaction.replace(R.id.fragmentLoadingspace, mFragment);
         mFragmentTransaction.addToBackStack(mFragment.getClass().getName());
         mFragmentTransaction.commit();
@@ -52,4 +61,12 @@ public static String TAG="MainActivity";
         }
 
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        mFragmentManager.putFragment(outState,"Fragment",mFragment);
+    }
+
+
 }
