@@ -2,6 +2,8 @@ package com.assesment.fragments;
 
 
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
@@ -42,12 +44,28 @@ public class NewsListFragment extends Fragment implements NewsListView {
     private RecyclerView mRecyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private List<Row> dataSet=new ArrayList<>();
+    Facts response=null;
     private View mView;
     NewsListPresenter presenter;
     RecyclerView.LayoutManager mLayoutManager;
       public NewsListFragment() {
     }
 
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        // Handling the orientation change
+
+        if(null!=savedInstanceState){
+            if(null!=savedInstanceState.getParcelable("FACTS")){
+                response=savedInstanceState.getParcelable("FACTS");
+                dataSet=response.getRows();
+                getActivity().setTitle(response.getTitle());
+            }
+        }
+    }
 
     // NewInstance for the NewsListFragment
     public static NewsListFragment newInstance() {
@@ -60,6 +78,8 @@ public class NewsListFragment extends Fragment implements NewsListView {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setRetainInstance(true);
+
 
     }
 
@@ -79,15 +99,29 @@ public class NewsListFragment extends Fragment implements NewsListView {
 
         // Checking the internet connection before calling the webservice
 
-        if(ConnectionLookup.isConnectingToInternet(getActivity())) {
-            // Ask presenter to load the facts from the webservice
-            presenter.startInitialLoading();
-        }else {
-            Toast.makeText(getActivity(),getResources().getString(R.string.connection_error),Toast.LENGTH_SHORT).show();
-            mSwipeRefreshLayout.setRefreshing(false);
+
+        if(null==response) {
+
+            if (ConnectionLookup.isConnectingToInternet(getActivity())) {
+                // Ask presenter to load the facts from the webservice
+                presenter.startInitialLoading();
+            } else {
+                Toast.makeText(getActivity(), getResources().getString(R.string.connection_error), Toast.LENGTH_SHORT).show();
+                mSwipeRefreshLayout.setRefreshing(false);
+            }
         }
 
         return mView;
+    }
+
+
+
+    // storing the values for handling configuration change
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelable("FACTS", (Parcelable) response);
     }
 
     //Initializing the view controls
@@ -102,6 +136,7 @@ public class NewsListFragment extends Fragment implements NewsListView {
     @Override
     public void onSuccess(Facts response) {
 
+        this.response=response;
         // Ask presenter to load the new content to the recyclerview
         presenter.loadNewsRecyclerView(response.getRows());
         // Setting the activity tittle from the webservice response
@@ -124,5 +159,7 @@ public class NewsListFragment extends Fragment implements NewsListView {
     public void sendConnectionError() {
         Toast.makeText(getActivity(),getResources().getString(R.string.connection_error),Toast.LENGTH_SHORT).show();
     }
+
+
 
 }
