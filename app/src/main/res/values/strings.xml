@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">Magazineapp</string>
+    <string name="no_titile">No Titile</string>
+    <string name="no_description">No Description</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="connection_error">Please check the internet connection</string>
+    <string name="service_error">Service error</string>
 </resources>
