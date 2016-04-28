@@ -137,10 +137,13 @@ public class NewsListFragment extends Fragment implements NewsListView {
     public void onSuccess(Facts response) {
 
         this.response=response;
-        // Ask presenter to load the new content to the recyclerview
-        presenter.loadNewsRecyclerView(response.getRows());
-        // Setting the activity tittle from the webservice response
-        getActivity().setTitle(response.getTitle());
+
+        if(null!=getActivity()) {
+            // Ask presenter to load the new content to the recyclerview
+            presenter.loadNewsRecyclerView(response.getRows());
+            // Setting the activity tittle from the webservice response
+            getActivity().setTitle(response.getTitle());
+        }
 
     }
 
