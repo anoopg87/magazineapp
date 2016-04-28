@@ -44,11 +44,12 @@ public static String TAG="MainActivity";
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+
 
         Fragment fragment=mFragmentManager.findFragmentById(R.id.fragmentLoadingspace);
         if(fragment instanceof NewsListFragment){
             finish();
         }
+
     }
 }
