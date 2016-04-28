@@ -106,4 +106,9 @@ public class NewsListPresenter  {
         });
 
     }
+
+
+    public List<Row> getDataSet() {
+        return dataSet;
+    }
 }
